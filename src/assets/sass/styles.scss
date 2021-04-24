@@ -1,17 +1,17 @@
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,600;0,700;0,800;1,400;1,600;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Open+Sans:ital,wght@0,400;0,600;0,700;0,800;1,400;1,600;1,700&display=swap');
 
 h1, h2, h3, h4, h5, h6 {
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Montserrat', sans-serif;
 }
 .payment-app {
-    width: 35%;
+    width: 50%;
     margin: 0 auto;
     margin-top: 50px;
     box-shadow: 0 8px 32px rgb(77, 101, 117 , 35%);
     border-radius: 12px;
     border-color: transparent;
     height: auto;
-    padding-bottom: 20px;
+    padding-bottom: 30px;
 }
 form{
     width: 70%;
@@ -20,11 +20,15 @@ form{
 form input[type="number"] {
     padding-right: 10px;
 }
-form input[type="text"] {
+form input, select {
+    padding-right: 15px;
+    padding-left: 15px;
+}
+form .name {
     padding-right: 10px;
     padding-left: 50px;
 }
-form input {
+form input, select {
     box-sizing: border-box;
     border-radius: 6px;
     width: 100%;
@@ -33,7 +37,7 @@ form input {
 form .default-input {
     border: 1px solid #C8D4EA;
 }
-input:focus {
+input:focus, select:focus {
     outline: none !important;
     border: 1px solid #23C5AC;
 }
@@ -41,6 +45,32 @@ form .field-wrapper img  {
     position: absolute;
     left: 13px;
     top: 17px;
+}
+form .field-wrapper .span-right {
+    position: absolute;
+    right: 118px;
+    top: 4px;
+}
+form .field-wrapper .span-right-text {
+    position: absolute;
+    right: 16px;
+    top: 16px;
+    color: #68879A;
+}
+form .field-wrapper .floating-label {
+    position: absolute;
+    left: 15px;
+    top: 0px;
+    color:#68879A;
+    transition: 0.2s ease all;
+}
+input:focus ~ .floating-label,
+input:not(:focus):valid ~ .floating-label{
+  top: 8px;
+  bottom: 10px;
+  left: 20px;
+  font-size: 11px;
+  opacity: 1;
 }
 button{
     outline: none !important;
@@ -58,5 +88,89 @@ button{
     background: #5FFFE6;
     border: none;
     color: #070C11;
-    
+}
+.header-info {
+    display: flex;
+    align-items: center;
+}
+.header-info div {
+    height: 100%;
+}
+.step-label {
+    width: 31px;
+    height: 26px;
+    background: #1169FF;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+}
+.step-label .span-right {
+    color: white;
+}
+.payment-methods-wrapper {
+    display: flex;
+    justify-content: space-between;
+    overflow: auto;
+
+}
+.payment-methods-wrapper .payment-method-block {
+    background: #FFFFFF;
+    border: 1px solid #F2F7FF;
+    box-sizing: border-box;
+    box-shadow: 0px 5px 12px rgba(94, 104, 123, 0.2);
+    border-radius: 4px;
+    height: 68px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    width: 110px;
+}
+// Scroll
+
+::-webkit-scrollbar {
+    width: 7px;
+    height: 7px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px rgba(211, 211, 211, 0.49);
+    border-radius: 7px;
+  }
+  
+
+  ::-webkit-scrollbar-thumb {
+    background: #23C5AC;
+    border-radius: 10px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #23C5AC;
+  }
+
+@media screen and (max-width: 320px) {
+    .payment-app {
+        width: 90%;
+    }
+}
+@media screen and (min-width: 768px) and (max-width: 1024px) {
+    .payment-app {
+        width: 85%;
+    }
+    form{
+        width: 70%;
+    }
+}
+@media screen and (min-width: 320px) and (max-width: 768px) {
+    .payment-app {
+        width: 95%;
+    }
+    form{
+        width: 80%;
+    }
+    .payment-methods-wrapper .payment-method-block{
+        margin-right: 15px;
+    }
 }
