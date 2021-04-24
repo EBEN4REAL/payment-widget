@@ -11,12 +11,14 @@
         </div>
       </div>
       <div class="field-wrapper position-relative mt-3">
-        <input type="text"  class="default-input " placeholder="Enter amount"/>
+        <input type="number"  class="default-input " placeholder="Enter amount" />
         <!-- <span class="floating-label">
           Enter amount
         </span> -->
         <span class="span-right-text">
-          <span>EUR</span>
+          <span>
+            {{selectedCountry ? selectedCountry.currencies[0].code : countryInfo.code}}
+          </span>
         </span>
       </div>
       <div class="header-info mt-3">
@@ -28,8 +30,9 @@
         </div>
       </div>
       <div class="field-wrapper position-relative mt-4">
-        <select class="default-input">
-          <option>Country</option>
+        <img :src="selectedCountry.flag" width="25" v-if="selectedCountry" class="country-flag" />
+        <select class="default-input" v-model="countryInfo.code" @change="selectCountry">
+          <option :value="country.alpha2Code" v-for="country in countries" :key="country.id">{{country.name}}</option>
         </select>
       </div>
       <div class="header-info mt-3">
@@ -42,29 +45,11 @@
       </div>
       <h6 class="mt-4">Instant payment methods</h6>
       <div class="payment-methods-wrapper mt-4">
-        <div class="">
-          <div class="payment-method-block p-4">
-            <img src="@/assets/img/image21.png" />
+        <div class="" v-for="paymentMethod in paymentMethods" :key="paymentMethod.id">
+          <div class="payment-method-block ">
+            <img :src="paymentMethod.img_url" />
           </div>
-          <div class="text-center mt-2">Ideal</div>
-        </div>
-        <div class="">
-          <div class="payment-method-block p-4">
-            <img src="@/assets/img/pay2.png" />
-          </div>
-          <div class="text-center mt-2">Giropay</div>
-        </div>
-        <div class="">
-          <div class="payment-method-block p-4">
-            <img src="@/assets/img/pay4.png" />
-          </div>
-          <div class="text-center mt-2">WebMoney</div>
-        </div>
-        <div class="">
-          <div class="payment-method-block p-4">
-            <img src="@/assets/img/pay3.png" />
-          </div>
-          <div class="text-center mt-2">Przelewy24</div>
+          <div class="text-center mt-2 p-method-name">{{paymentMethod.name}}</div>
         </div>
       </div>
       <h6 class="mt-4">Non-Instant payment methods</h6>
@@ -85,16 +70,40 @@
         </div>
       </div>
       <div class="field-wrapper mt-4 position-relative">
-        <input type="text" placeholder="Card number" class="default-input"/>
-        <span class="span-right">
-          <img src="@/assets/img/CC.png" />
+        <input type="text" placeholder="Full name" class="default-input" @keypress=" validateCharacters"/>
+        <span class="error-message"></span>
+        <span class="error-icon">
+          <img src="@/assets/img/error.png" width="20" />
         </span>
       </div>
-      <div class="mt-4">
-        <input type="text" placeholder="Expiration date" class="default-input"/>
+      <div class="field-wrapper mt-4 position-relative">
+        <input type="text" placeholder="Card number" id="card-number" class="default-input" @input="validateCardNumber"/>
+        <span class="error-icon">
+          <img src="@/assets/img/error.png" width="20" />
+        </span>
+        <span class="span-right">
+          <img src="@/assets/img/card.png" class="card-img" width="30" />
+        </span>
       </div>
-      <div class="mt-4">
-        <input type="number" placeholder="CVV" class="default-input"/>
+      <div class="field-wrapper mt-4 position-relative">
+        <div class="exp-wrapper default-input" id="expiry-field">
+          <input autocomplete="off" class="exp" id="month" maxlength="2" pattern="[0-9]*" inputmode="numerical" placeholder="MM" type="text" data-pattern-validate  /> 
+          <input autocomplete="off" class="exp" id="year" maxlength="2" pattern="[0-9]*" inputmode="numerical" placeholder="YY" type="text" data-pattern-validate @input="validateExpiryDate" />
+        </div>
+        <span class="error-message" id="expiry"></span>
+        <span class="error-icon">
+          <img src="@/assets/img/error.png" width="20" />
+        </span>
+        <span class="error-icon">
+          <img src="@/assets/img/error.png" width="20" />
+        </span>
+      </div>
+      <div class="field-wrapper mt-4 position-relative">
+        <input type="text" placeholder="CVV" class="default-input"  @input="validateCvv"/>
+        <span class="error-message"></span>
+        <span class="error-icon">
+          <img src="@/assets/img/error.png" width="20" />
+        </span>
       </div>
       <div class="mt-4">
         <button class="default-button w-100" type="submit">Submit </button>
@@ -110,48 +119,258 @@ export default {
   components: {
 
   },
+ 
   data() {
     return {
-      clientIP: null
+      clientIP: null,
+      countryInfo: {},
+      paymentMethods: [],
+      countries: [],
+      selectedCountry: null,
+      countryCode: null,
+      name: ''
     }
   },
   watch: {
     clientIP() {
       this.getCountry()
     },
-    countryInfo() {
+    countryCode() {
       this.requestPaymentMethod()
+    },
+    countryInfo() {
+      this.getAllCountries()
+    },
+    countries(countries) {
+      const allCountries = [...countries]
+      const filteredCountry = allCountries.filter(country => country.alpha2Code == this.countryInfo.code)[0]
+      this.selectedCountry = filteredCountry
     }
   },
   mounted() {
     this.getClientIP()
+    const monthInput = document.querySelector('#month');
+    const yearInput = document.querySelector('#year');
+
+    const focusSibling = (target, direction, callback) => {
+      const nextTarget = target[direction];
+      nextTarget && nextTarget.focus();
+      callback && callback(nextTarget);
+    }
+
+    monthInput.addEventListener('input', (event) => {
+
+      const value = event.target.value.toString();
+      if (value.length === 1 && value > 1) {
+          event.target.value = "0" + value;
+      }
+      if (value === "00") {
+          event.target.value = "01";
+      } else if (value > 12) {
+          event.target.value = "12";
+      }
+      2 <= event.target.value.length && focusSibling(event.target, "nextElementSibling");
+      event.stopImmediatePropagation();
+    });
+
+    yearInput.addEventListener('keydown', (event) => {
+      if (event.key === "Backspace" && event.target.selectionStart === 0) {
+        focusSibling(event.target, "previousElementSibling");
+        event.stopImmediatePropagation();
+      }
+    });
+
+    const inputMatchesPattern = function(e) {
+      const { 
+        value, 
+        selectionStart, 
+        selectionEnd, 
+        pattern 
+      } = e.target;
+      
+      const character = String.fromCharCode(e.which);
+      const proposedEntry = value.slice(0, selectionStart) + character + value.slice(selectionEnd);
+      const match = proposedEntry.match(pattern);
+      
+      return e.metaKey || 
+        e.which <= 0 ||
+        e.which == 8 || 
+        match && match["0"] === match.input; 
+    };
+
+    document.querySelectorAll('input[data-pattern-validate]').forEach(el => el.addEventListener('keypress', e => {
+      if (!inputMatchesPattern(e)) {
+        return e.preventDefault();
+      }
+    }));
+
+    document.getElementById('card-number').addEventListener('input' , (e) => {
+      this.validateCardNumber(e.target.value)
+    })
+    
   },
   methods: {
     generateuniqueId() {
       return Math.floor(Math.random() * Math.floor(Math.random() * Date.now()))
     },
-    async getCountry() {
+    getCountry() {
       const uid = this.generateuniqueId()
-      await fetch(`https://api.paymentwall.com/api/rest/country?key=e8310e204978b629afa4dd0483740bf0&uid=${uid}&user_ip=${this.clientIP}`)
+      fetch(`https://api.paymentwall.com/api/rest/country?key=e8310e204978b629afa4dd0483740bf0&uid=${uid}&user_ip=${this.clientIP}`)
         .then(response => response.json())
-          .then(data => {
-            this.countryInfo = data
-          });
+        .then(data => {
+          this.countryCode = data.code
+          this.countryInfo = data
+        });
     },
     getClientIP() {
       fetch(`https://api.bigdatacloud.net/data/ip-geolocation-full?key=d9e53816d07345139c58d0ea733e3870`)
         .then(response => response.json())
-          .then(data => {
-            this.clientIP = data.ip
-          });
+        .then(data => {
+          this.clientIP = data.ip
+        });
+    },
+    getAllCountries() {
+      fetch(`https://restcountries.eu/rest/v2/all`)
+        .then(response => response.json())
+        .then(data => {
+          this.countries = data
+        });
     },
     requestPaymentMethod() {
-      fetch(`https://api.bigdatacloud.net/data/ip-geolocation-full?key=d9e53816d07345139c58d0ea733e3870`)
+      fetch(`https://api.paymentwall.com/api/payment-systems/?key=e8310e204978b629afa4dd0483740bf0&country_code=${this.countryCode}`)
         .then(response => response.json())
-          .then(data => {
-            this.clientIP = data.ip
-          });
-    }
+        .then(data => {
+          this.paymentMethods = data
+        });
+    },
+    selectCountry(e) {
+      const countries = [...this.countries]
+      const filteredCountry = countries.filter(country => country.alpha2Code == e.target.value)[0]
+      this.countryCode = filteredCountry.currencies[0].code.length > 2 
+        ? filteredCountry.alpha2Code 
+        : filteredCountry.currencies[0].code
+      this.selectedCountry = filteredCountry
+    },
+    validateCharacters(e) {
+      const errorMessage = e.target.nextSibling
+      let char = String.fromCharCode(e.keyCode)
+      if(/^[A-Za-z]+$/.test(char)) {
+        errorMessage.style.display = 'none'
+        errorMessage.nextSibling.style.display = 'none'
+        e.target.classList.remove('error')
+      } else {
+        e.preventDefault()
+        errorMessage.style.display = 'inline'
+        errorMessage.innerHTML = 'Please input letters'
+        errorMessage.style.color = '#FF0000'
+        errorMessage.nextSibling.style.display = 'inline'
+        e.target.classList.add('error')
+      }
+    },
+    validateExpiryDate() {
+      const errorMessage = document.getElementById('expiry')
+      const expField = document.getElementById('expiry-field')
+      let today, someday;
+      const monthInput = document.querySelector('#month').value;
+      let yearInput = document.querySelector('#year').value;
+      yearInput = 20 + yearInput
+      today = new Date();
+      someday = new Date();
+      someday.setFullYear(yearInput, monthInput - 1);
+
+      if (someday < today) {
+        errorMessage.style.display = 'inline'
+        errorMessage.innerHTML = 'Invalid expiration date'
+        errorMessage.style.color = '#FF0000'
+        errorMessage.nextSibling.style.display = 'inline'
+        expField.classList.add('error')
+      }else {
+        errorMessage.style.display = 'none'
+        errorMessage.nextSibling.style.display = 'none'
+        expField.classList.remove('error')
+      }
+    },
+    validateCvv(e) {
+      const errorMessage = e.target.nextSibling
+      const regExCvvDigitsLength =  /^[0-9]{3,4}$/
+      const regExOnlyNumbers = new RegExp('^[0-9]+$')
+      
+      if(!regExCvvDigitsLength.test(e.target.value) || !regExOnlyNumbers.test(e.target.value)) {
+        e.preventDefault()
+        errorMessage.style.display = 'inline'
+        errorMessage.innerHTML = 'Cvv is invalid'
+        errorMessage.style.color = '#FF0000'
+        errorMessage.nextSibling.style.display = 'inline'
+        e.target.classList.add('error')
+
+      }else {
+        errorMessage.style.display = 'none'
+        errorMessage.nextSibling.style.display = 'none'
+        e.target.classList.remove('error')
+      }
+    },
+    validateCardNumber(cardNo) {
+      console.log(cardNo)
+      var s = 0;
+      var doubleDigit = false;
+      for (var i = cardNo.length - 1; i >= 0; i--) {
+          var digit = +cardNo[i];
+          if (doubleDigit) {
+              digit *= 2;
+              if (digit > 9)
+                  digit -= 9;
+          }
+          s += digit;
+          doubleDigit = !doubleDigit;
+      }
+      console.log(s % 10 == 0)
+      if(s % 10 == 0) {
+        this.GetCardType(cardNo)
+      }
+    },
+    GetCardType(number){
+      // visa
+      var re = new RegExp("^4");
+      if (number.match(re) != null)
+          return "Visa";
+
+      // Mastercard 
+      // Updated for Mastercard 2017 BINs expansion
+      if (/^(5[1-5][0-9]{14}|2(22[1-9][0-9]{12}|2[3-9][0-9]{13}|[3-6][0-9]{14}|7[0-1][0-9]{13}|720[0-9]{12}))$/.test(number)) 
+          return "Mastercard";
+
+      // AMEX
+      re = new RegExp("^3[47]");
+      if (number.match(re) != null)
+          return "AMEX";
+
+      // Discover
+      re = new RegExp("^(6011|622(12[6-9]|1[3-9][0-9]|[2-8][0-9]{2}|9[0-1][0-9]|92[0-5]|64[4-9])|65)");
+      if (number.match(re) != null)
+          return "Discover";
+
+      // Diners
+      re = new RegExp("^36");
+      if (number.match(re) != null)
+          return "Diners";
+
+      // Diners - Carte Blanche
+      re = new RegExp("^30[0-5]");
+      if (number.match(re) != null)
+          return "Diners - Carte Blanche";
+
+      // JCB
+      re = new RegExp("^35(2[89]|[3-8][0-9])");
+      if (number.match(re) != null)
+          return "JCB";
+
+      // Visa Electron
+      re = new RegExp("^(4026|417500|4508|4844|491(3|7))");
+      if (number.match(re) != null)
+          return "Visa Electron";
+
+      return "";
+  }
   }
 }
 </script>

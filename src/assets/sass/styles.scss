@@ -22,6 +22,7 @@ form input[type="number"] {
 }
 form select {
     padding-right: 15px;
+    padding-left: 40px;
 }
 form input, select {
     padding-right: 15px;
@@ -37,26 +38,71 @@ form input, select {
     width: 100%;
     height: 56px;
 }
+.exp-wrapper{
+    width: 100%;
+    height: 56px;
+    box-sizing: border-box;
+    border-radius: 6px;
+}
+.exp-wrapper::after {
+    content: '/';
+    position: absolute;
+    left: 13%;
+    margin-left: -4px;
+    color: #aaa;
+    top: 14px;
+}
+.exp-wrapper input {
+    width: 80px;
+    border: none;
+    outline: none;
+    height: 98%;
+}
+.exp-wrapper input:hover , .exp-wrapper input:focus {
+    border: none  !important;
+    outline: none  !important;
+}
+.exp-wrapper input:first-child::after {
+    content: "/";
+}
+.exp-wrapper input:last-child::after{
+    width: 80%;
+}
 form .default-input {
     border: 1px solid #C8D4EA;
+}
+form .error {
+    border: 1px solid #FF0000  !important;
 }
 input:focus, select:focus {
     outline: none !important;
     border: 1px solid #23C5AC;
 }
-form .field-wrapper img  {
+form .field-wrapper .card-img  {
     position: absolute;
     left: 13px;
     top: 17px;
+}
+form .field-wrapper .country-flag {
+    position: absolute;
+    left: 13px;
+    top: 23px;
 }
 form .field-wrapper .span-right {
     position: absolute;
     right: 118px;
     top: 4px;
 }
+form .field-wrapper .error-icon {
+    position: absolute;
+    right: 18px;
+    top: 16px;
+    color: #68879A;
+    display: none;
+}
 form .field-wrapper .span-right-text {
     position: absolute;
-    right: 16px;
+    right: 35px;
     top: 16px;
     color: #68879A;
 }
@@ -67,14 +113,7 @@ form .field-wrapper .floating-label {
     color:#68879A;
     transition: 0.2s ease all;
 }
-input:focus ~ .floating-label,
-input:not(:focus):valid ~ .floating-label{
-  top: 8px;
-  bottom: 10px;
-  left: 20px;
-  font-size: 11px;
-  opacity: 1;
-}
+
 button{
     outline: none !important;
     padding: 10px 48px 10px 48px;
@@ -114,9 +153,7 @@ button{
 }
 .payment-methods-wrapper {
     display: flex;
-    justify-content: space-between;
     overflow: auto;
-
 }
 .payment-methods-wrapper .payment-method-block {
     background: #FFFFFF;
@@ -129,7 +166,10 @@ button{
     align-items: center;
     justify-content: center;
     margin-right: 15px;
-    width: 110px;
+    padding: 15px;
+}
+.p-method-name {
+    width:110px;
 }
 // Scroll
 
