@@ -109,6 +109,49 @@ export default {
   name: 'App',
   components: {
 
+  },
+  data() {
+    return {
+      clientIP: null
+    }
+  },
+  watch: {
+    clientIP() {
+      this.getCountry()
+    },
+    countryInfo() {
+      this.requestPaymentMethod()
+    }
+  },
+  mounted() {
+    this.getClientIP()
+  },
+  methods: {
+    generateuniqueId() {
+      return Math.floor(Math.random() * Math.floor(Math.random() * Date.now()))
+    },
+    async getCountry() {
+      const uid = this.generateuniqueId()
+      await fetch(`https://api.paymentwall.com/api/rest/country?key=e8310e204978b629afa4dd0483740bf0&uid=${uid}&user_ip=${this.clientIP}`)
+        .then(response => response.json())
+          .then(data => {
+            this.countryInfo = data
+          });
+    },
+    getClientIP() {
+      fetch(`https://api.bigdatacloud.net/data/ip-geolocation-full?key=d9e53816d07345139c58d0ea733e3870`)
+        .then(response => response.json())
+          .then(data => {
+            this.clientIP = data.ip
+          });
+    },
+    requestPaymentMethod() {
+      fetch(`https://api.bigdatacloud.net/data/ip-geolocation-full?key=d9e53816d07345139c58d0ea733e3870`)
+        .then(response => response.json())
+          .then(data => {
+            this.clientIP = data.ip
+          });
+    }
   }
 }
 </script>
