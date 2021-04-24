@@ -1,6 +1,6 @@
 <template>
   <div class="payment-app mb-5">
-    <h5 class="text-center py-4">Enter Payment Information</h5>
+    <h5 class="text-center py-4">Paywall Widget</h5>
     <form id="form">
       <div class="header-info">
         <div class="step-label">
@@ -11,10 +11,7 @@
         </div>
       </div>
       <div class="field-wrapper position-relative mt-3">
-        <input type="number"  class="default-input " placeholder="Enter amount" />
-        <!-- <span class="floating-label">
-          Enter amount
-        </span> -->
+        <input type="text"  class="default-input " placeholder="Enter amount" value="0" @input="validateAmount" />
         <span class="span-right-text">
           <span>
             {{selectedCountry ? selectedCountry.currencies[0].code : countryInfo.code}}
@@ -77,8 +74,9 @@
         </span>
       </div>
       <div class="field-wrapper mt-4 position-relative">
-        <input type="text" placeholder="Card number" id="card-number" class="default-input" @input="validateCardNumber"/>
-        <span class="error-icon">
+        <input type="text" placeholder="Card number" id="card-number" class="default-input" @input="validateCardNumber" />
+        <span class="error-message" id="card-error-message"></span>
+        <span class="error-icon" id="card-error-icon">
           <img src="@/assets/img/error.png" width="20" />
         </span>
         <span class="span-right">
@@ -87,7 +85,7 @@
       </div>
       <div class="field-wrapper mt-4 position-relative">
         <div class="exp-wrapper default-input" id="expiry-field">
-          <input autocomplete="off" class="exp" id="month" maxlength="2" pattern="[0-9]*" inputmode="numerical" placeholder="MM" type="text" data-pattern-validate  /> 
+          <input autocomplete="off" class="exp" id="month" maxlength="2" pattern="[0-9]*" inputmode="numerical" placeholder="MM" type="text" data-pattern-validate @input="validateExpiryDate"  /> 
           <input autocomplete="off" class="exp" id="year" maxlength="2" pattern="[0-9]*" inputmode="numerical" placeholder="YY" type="text" data-pattern-validate @input="validateExpiryDate" />
         </div>
         <span class="error-message" id="expiry"></span>
@@ -106,7 +104,7 @@
         </span>
       </div>
       <div class="mt-4">
-        <button class="default-button w-100" type="submit">Submit </button>
+        <button class="default-button w-100" type="submit">Pay {{convertThousand(parseFloat(amount))}}  {{selectedCountry ? selectedCountry.currencies[0].code : countryInfo.code}} </button>
       </div>
     </form>
   </div>
@@ -128,7 +126,9 @@ export default {
       countries: [],
       selectedCountry: null,
       countryCode: null,
-      name: ''
+      name: '',
+      amount: '',
+      formIsValid: false
     }
   },
   watch: {
@@ -205,6 +205,13 @@ export default {
     }));
 
     document.getElementById('card-number').addEventListener('input' , (e) => {
+      let invalidChars = /[^0-9]/gi
+      e.target.value.replace(/\W/gi, '').replace(/(.{4})/g, '$1 ')
+
+      if(invalidChars.test(e.target.value)) {
+        e.target.value = e.target.value.replace(invalidChars,"");
+        return
+      }
       this.validateCardNumber(e.target.value)
     })
     
@@ -213,6 +220,7 @@ export default {
     generateuniqueId() {
       return Math.floor(Math.random() * Math.floor(Math.random() * Date.now()))
     },
+
     getCountry() {
       const uid = this.generateuniqueId()
       fetch(`https://api.paymentwall.com/api/rest/country?key=e8310e204978b629afa4dd0483740bf0&uid=${uid}&user_ip=${this.clientIP}`)
@@ -222,6 +230,7 @@ export default {
           this.countryInfo = data
         });
     },
+
     getClientIP() {
       fetch(`https://api.bigdatacloud.net/data/ip-geolocation-full?key=d9e53816d07345139c58d0ea733e3870`)
         .then(response => response.json())
@@ -229,6 +238,7 @@ export default {
           this.clientIP = data.ip
         });
     },
+
     getAllCountries() {
       fetch(`https://restcountries.eu/rest/v2/all`)
         .then(response => response.json())
@@ -236,6 +246,7 @@ export default {
           this.countries = data
         });
     },
+
     requestPaymentMethod() {
       fetch(`https://api.paymentwall.com/api/payment-systems/?key=e8310e204978b629afa4dd0483740bf0&country_code=${this.countryCode}`)
         .then(response => response.json())
@@ -290,87 +301,63 @@ export default {
         expField.classList.remove('error')
       }
     },
-    validateCvv(e) {
-      const errorMessage = e.target.nextSibling
-      const regExCvvDigitsLength =  /^[0-9]{3,4}$/
-      const regExOnlyNumbers = new RegExp('^[0-9]+$')
-      
-      if(!regExCvvDigitsLength.test(e.target.value) || !regExOnlyNumbers.test(e.target.value)) {
-        e.preventDefault()
-        errorMessage.style.display = 'inline'
-        errorMessage.innerHTML = 'Cvv is invalid'
-        errorMessage.style.color = '#FF0000'
-        errorMessage.nextSibling.style.display = 'inline'
-        e.target.classList.add('error')
 
-      }else {
-        errorMessage.style.display = 'none'
-        errorMessage.nextSibling.style.display = 'none'
-        e.target.classList.remove('error')
+    validateAmount(e){
+      this.amount = e.target.value
+      var invalidChars = /[^0-9]/gi
+      if(invalidChars.test(e.target.value)) {
+        e.target.value = e.target.value.replace(invalidChars,"");
       }
     },
+
+    validateCvv(e) {
+      let invalidChars = /[^0-9]/gi
+      if(invalidChars.test(e.target.value)) {
+        e.target.value = e.target.value.replace(invalidChars,"");
+      }
+    },
+
     validateCardNumber(cardNo) {
-      console.log(cardNo)
+      const errorMessage = document.getElementById('card-error-message')
+      const cardField = document.getElementById('card-number')
+
       var s = 0;
       var doubleDigit = false;
-      for (var i = cardNo.length - 1; i >= 0; i--) {
-          var digit = +cardNo[i];
+
+      for (let i = cardNo.length - 1; i >= 0; i--) {
+          let digit = +cardNo[i];
+
           if (doubleDigit) {
               digit *= 2;
               if (digit > 9)
                   digit -= 9;
           }
+
           s += digit;
           doubleDigit = !doubleDigit;
       }
-      console.log(s % 10 == 0)
+
       if(s % 10 == 0) {
-        this.GetCardType(cardNo)
+        errorMessage.style.display = 'none'
+        errorMessage.nextSibling.style.display = 'none'
+        cardField.classList.remove('error')
+      }else {
+        errorMessage.style.display = 'inline'
+        errorMessage.innerHTML = 'Invalid card number'
+        errorMessage.style.color = '#FF0000'
+        errorMessage.nextSibling.style.display = 'inline'
+        cardField.classList.add('error')
       }
     },
-    GetCardType(number){
-      // visa
-      var re = new RegExp("^4");
-      if (number.match(re) != null)
-          return "Visa";
-
-      // Mastercard 
-      // Updated for Mastercard 2017 BINs expansion
-      if (/^(5[1-5][0-9]{14}|2(22[1-9][0-9]{12}|2[3-9][0-9]{13}|[3-6][0-9]{14}|7[0-1][0-9]{13}|720[0-9]{12}))$/.test(number)) 
-          return "Mastercard";
-
-      // AMEX
-      re = new RegExp("^3[47]");
-      if (number.match(re) != null)
-          return "AMEX";
-
-      // Discover
-      re = new RegExp("^(6011|622(12[6-9]|1[3-9][0-9]|[2-8][0-9]{2}|9[0-1][0-9]|92[0-5]|64[4-9])|65)");
-      if (number.match(re) != null)
-          return "Discover";
-
-      // Diners
-      re = new RegExp("^36");
-      if (number.match(re) != null)
-          return "Diners";
-
-      // Diners - Carte Blanche
-      re = new RegExp("^30[0-5]");
-      if (number.match(re) != null)
-          return "Diners - Carte Blanche";
-
-      // JCB
-      re = new RegExp("^35(2[89]|[3-8][0-9])");
-      if (number.match(re) != null)
-          return "JCB";
-
-      // Visa Electron
-      re = new RegExp("^(4026|417500|4508|4844|491(3|7))");
-      if (number.match(re) != null)
-          return "Visa Electron";
-
-      return "";
-  }
+    convertThousand(request) {
+      if (!isFinite(request)) {
+        return "0.00";
+      }
+      return request
+        .toFixed(2)
+        .toString()
+        .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    },
   }
 }
 </script>

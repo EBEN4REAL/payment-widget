@@ -47,13 +47,13 @@ form input, select {
 .exp-wrapper::after {
     content: '/';
     position: absolute;
-    left: 13%;
+    left: 11%;
     margin-left: -4px;
     color: #aaa;
     top: 14px;
 }
 .exp-wrapper input {
-    width: 80px;
+    width: 58px;
     border: none;
     outline: none;
     height: 98%;
