@@ -58,6 +58,12 @@ form input, select {
     outline: none;
     height: 98%;
 }
+button:disabled,
+button[disabled], .disabled{
+    border: 1px solid #999999;
+    background-color: #cccccc;
+    color: #666666;
+}
 .exp-wrapper input:hover , .exp-wrapper input:focus {
     border: none  !important;
     outline: none  !important;

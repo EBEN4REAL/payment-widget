@@ -1,6 +1,6 @@
 <template>
   <div class="payment-app mb-5">
-    <h5 class="text-center py-4">Paywall Widget</h5>
+    <h5 class="text-center py-4">Paymentwall Widget</h5>
     <form id="form">
       <div class="header-info">
         <div class="step-label">
@@ -104,7 +104,15 @@
         </span>
       </div>
       <div class="mt-4">
-        <button class="default-button w-100" type="submit">Pay {{convertThousand(parseFloat(amount))}}  {{selectedCountry ? selectedCountry.currencies[0].code : countryInfo.code}} </button>
+        <button class="default-button w-100" type="submit" 
+          @click="pay" 
+          :disabled="!formIsValid"
+          :class="[!formIsValid ? 'disabled' : null]"
+          :style="[
+            !formIsValid
+              ? { cursor: 'not-allowed' }
+              : { cursor: 'pointer' }
+          ]">Pay {{convertThousand(parseFloat(amount))}}  {{selectedCountry ? selectedCountry.currencies[0].code : countryInfo.code}} </button>
       </div>
     </form>
   </div>
@@ -128,10 +136,30 @@ export default {
       countryCode: null,
       name: '',
       amount: '',
-      formIsValid: false
+      formIsValid: false,
+      validators: {
+        amount: false,
+        name: false,
+        cardNumber: false,
+        expiryDate: false,
+        cvv: false
+      }
     }
   },
   watch: {
+    validators: {
+      handler: function(validators) {
+        for(let val in validators) {
+          if(!validators[val]) {
+            this.formIsValid = false
+          }else {
+            this.formIsValid = true
+          }
+        }
+        console.log(this.formIsValid)
+      },
+      deep: true
+    },
     clientIP() {
       this.getCountry()
     },
@@ -145,7 +173,8 @@ export default {
       const allCountries = [...countries]
       const filteredCountry = allCountries.filter(country => country.alpha2Code == this.countryInfo.code)[0]
       this.selectedCountry = filteredCountry
-    }
+    },
+    
   },
   mounted() {
     this.getClientIP()
@@ -269,6 +298,7 @@ export default {
         errorMessage.style.display = 'none'
         errorMessage.nextSibling.style.display = 'none'
         e.target.classList.remove('error')
+        this.validators.name = true
       } else {
         e.preventDefault()
         errorMessage.style.display = 'inline'
@@ -276,6 +306,7 @@ export default {
         errorMessage.style.color = '#FF0000'
         errorMessage.nextSibling.style.display = 'inline'
         e.target.classList.add('error')
+        this.validators.name = false
       }
     },
     validateExpiryDate() {
@@ -295,10 +326,12 @@ export default {
         errorMessage.style.color = '#FF0000'
         errorMessage.nextSibling.style.display = 'inline'
         expField.classList.add('error')
+        this.validators.expiryDate = false
       }else {
         errorMessage.style.display = 'none'
         errorMessage.nextSibling.style.display = 'none'
         expField.classList.remove('error')
+        this.validators.expiryDate = true
       }
     },
 
@@ -307,14 +340,22 @@ export default {
       var invalidChars = /[^0-9]/gi
       if(invalidChars.test(e.target.value)) {
         e.target.value = e.target.value.replace(invalidChars,"");
+        this.validators.amount = false
+      }else {
+        this.validators.amount = true
       }
+      
     },
 
     validateCvv(e) {
       let invalidChars = /[^0-9]/gi
       if(invalidChars.test(e.target.value)) {
         e.target.value = e.target.value.replace(invalidChars,"");
+        this.validators.cvv = false
+      }else {
+        this.validators.cvv = true
       }
+      
     },
 
     validateCardNumber(cardNo) {
@@ -341,13 +382,18 @@ export default {
         errorMessage.style.display = 'none'
         errorMessage.nextSibling.style.display = 'none'
         cardField.classList.remove('error')
+        this.validators.cardNumber = true
       }else {
         errorMessage.style.display = 'inline'
         errorMessage.innerHTML = 'Invalid card number'
         errorMessage.style.color = '#FF0000'
         errorMessage.nextSibling.style.display = 'inline'
         cardField.classList.add('error')
+        this.validators.cardNumber = false
       }
+    },
+    pay(e){
+      e.preventDefault()
     },
     convertThousand(request) {
       if (!isFinite(request)) {
