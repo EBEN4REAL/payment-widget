@@ -1,4 +1,4 @@
-# payment-wall
+# payment-widget
 
 ## Project setup
 ```
