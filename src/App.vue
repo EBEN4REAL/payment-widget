@@ -177,14 +177,12 @@ export default {
   watch: {
     validators: {
       handler: function(validators) {
-        
         for(let val in validators) {
           if(!validators[val]) {
             this.formIsValid  =  false
             return
           }else {
             this.formIsValid = true
-            console.log( this.formIsValid)
           }
         }
         
@@ -464,9 +462,9 @@ export default {
     pay(e){
       e.preventDefault()
       this.showSuccessScreen = !this.showSuccessScreen
-      // setTimeout(() => {
-      //   this.showSuccessScreen = !this.showSuccessScreen
-      // }, 5000)
+      setTimeout(() => {
+        this.showSuccessScreen = !this.showSuccessScreen
+      }, 5000)
     },
     toggleSuccessToast() {
       this.showSuccessScreen = !this.showSuccessScreen
