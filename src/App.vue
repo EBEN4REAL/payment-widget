@@ -84,7 +84,7 @@
         <span class="floating-label">Full name</span>
       </div>
       <div class="field-wrapper mt-4 position-relative">
-        <input type="text"  id="card-number" class="default-input" @input="validateCardNumber" required />
+        <input type="text"  id="card-number" class="default-input" @blur="validateCardNumber" required />
         <span class="error-message" id="card-error-message"></span>
         <span class="error-icon" id="card-error-icon">
           <img src="@/assets/img/error.png" width="20" />
@@ -188,9 +188,11 @@ export default {
         for(let val in validators) {
           if(!validators[val]) {
             this.formIsValid  =  false
+            console.log(this.formIsValid)
             return
           }else {
             this.formIsValid = true
+            console.log(this.formIsValid)
           }
         }
         
