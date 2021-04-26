@@ -1,6 +1,6 @@
 <template>
   <div class="payment-app mb-5">
-    <h5 class="text-center py-4">Paymentwall Widget</h5>
+    <h5 class="text-center py-4">Payment Widget</h5>
     <form id="form">
       <div class="header-info">
         <div class="step-label">
@@ -459,7 +459,7 @@ export default {
         this.validators.cardNumber = false
       }
     },
-    
+
     pay(e){
       e.preventDefault()
       this.showSuccessScreen = !this.showSuccessScreen
