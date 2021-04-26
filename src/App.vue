@@ -13,8 +13,7 @@
       <div class="field-wrapper position-relative mt-3">
         <img :src="selectedCountry.flag" width="25" v-if="selectedCountry" class="country-flag" />
         <select class="default-input" v-model="countryInfo.code" @change="selectCountry">
-          <option :value="country.alpha2Code" v-for="country in countries" :key="country.id">
-            <img :src="country.flag" width="25"  class="country-flag mr-2" />
+          <option :value="country.alpha2Code" v-for="country in countries" :key="country.id" :style="[{backgroundImage: `url(${country.flag})`}]">
             {{country.name}}
           </option>
         </select>
@@ -499,9 +498,9 @@ export default {
       }
 
       this.showSuccessScreen = !this.showSuccessScreen
-      // setTimeout(() => {
-      //   this.showSuccessScreen = !this.showSuccessScreen
-      // }, 5000)
+      setTimeout(() => {
+        this.showSuccessScreen = !this.showSuccessScreen
+      }, 5000)
     },
 
     toggleSuccessToast() {
