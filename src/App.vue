@@ -76,9 +76,9 @@
         </div>
       </div>
       <div class="field-wrapper mt-4 position-relative">
-        <input type="text" class="default-input" @keypress=" validateCharacters" required/>
-        <span class="error-message"></span>
-        <span class="error-icon">
+        <input type="text" class="default-input" @keypress=" validateCharacters" required id="name"/>
+        <span class="error-message" id="name-error-message"></span>
+        <span class="error-icon" id="name-error-icon">
           <img src="@/assets/img/error.png" width="20" />
         </span>
         <span class="floating-label">Full name</span>
@@ -109,7 +109,7 @@
       </div>
       <div class="field-wrapper mt-4 position-relative">
         <input type="text"  class="default-input"  @input="validateCvv" required/>
-        <span class="error-message"></span>
+        <span class="error-message" ></span>
         <span class="error-icon">
           <img src="@/assets/img/error.png" width="20" />
         </span>
@@ -465,6 +465,39 @@ export default {
 
     pay(e){
       e.preventDefault()
+      const nameInput = document.getElementById('name')
+      const errorMessage = document.getElementById('name-error-message')
+      const errorIcon = document.getElementById('name-error-icon')
+      const cardErrorMessage = document.getElementById('card-error-message')
+      const cardField = document.getElementById('card-number')
+
+      if(!nameInput.value) {
+        errorMessage.style.display = 'inline'
+        errorMessage.innerHTML = 'Card holder name is required'
+        errorMessage.style.color = '#FF0000'
+        errorIcon.style.display = 'inline'
+        nameInput.classList.add('error')
+        return
+      }
+      else if(!cardField.value) {
+        cardErrorMessage.style.display = 'inline'
+        cardErrorMessage.innerHTML = 'card number is required'
+        cardErrorMessage.style.color = '#FF0000'
+        cardErrorMessage.nextElementSibling.style.display = 'inline'
+        cardField.classList.add('error')
+        return
+      }
+      else {
+        cardErrorMessage.style.display = 'none'
+        cardErrorMessage.nextElementSibling.style.display = 'none'
+        cardField.classList.remove('error')
+
+        errorMessage.style.display = 'none'
+        errorIcon.style.display = 'none'
+        nameInput.classList.remove('error')
+        this.formIsValid = true
+      }
+
       this.showSuccessScreen = !this.showSuccessScreen
       setTimeout(() => {
         this.showSuccessScreen = !this.showSuccessScreen
