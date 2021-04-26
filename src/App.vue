@@ -2,9 +2,26 @@
   <div class="payment-app mb-5">
     <h5 class="text-center py-4">Payment Widget</h5>
     <form id="form">
-      <div class="header-info">
+      <div class="header-info mt-3">
         <div class="step-label">
           <span>1</span>
+        </div>
+        <div>
+          <h6 class="ml-3 mt-2">Select country</h6>
+        </div>
+      </div>
+      <div class="field-wrapper position-relative mt-3">
+        <img :src="selectedCountry.flag" width="25" v-if="selectedCountry" class="country-flag" />
+        <select class="default-input" v-model="countryInfo.code" @change="selectCountry">
+          <option :value="country.alpha2Code" v-for="country in countries" :key="country.id">
+            <img :src="country.flag" width="25"  class="country-flag mr-2" />
+            {{country.name}}
+          </option>
+        </select>
+      </div>
+      <div class="header-info mt-3">
+        <div class="step-label">
+          <span>2</span>
         </div>
         <div>
           <h6 class="ml-3 mt-2">Enter amount</h6>
@@ -23,20 +40,7 @@
         </span>
         <span class="floating-label">Enter Amount</span>
       </div>
-      <div class="header-info mt-3">
-        <div class="step-label">
-          <span>2</span>
-        </div>
-        <div>
-          <h6 class="ml-3 mt-2">Select country</h6>
-        </div>
-      </div>
-      <div class="field-wrapper position-relative mt-4">
-        <img :src="selectedCountry.flag" width="25" v-if="selectedCountry" class="country-flag" />
-        <select class="default-input" v-model="countryInfo.code" @change="selectCountry">
-          <option :value="country.alpha2Code" v-for="country in countries" :key="country.id">{{country.name}}</option>
-        </select>
-      </div>
+      
       <div class="header-info mt-3">
         <div class="step-label">
           <span>3</span>
@@ -329,7 +333,7 @@ export default {
     validateCharacters(e) {
       const errorMessage = e.target.nextSibling
       let char = String.fromCharCode(e.keyCode)
-      if(/^[A-Za-z]+$/.test(char)) {
+      if(/^[A-Za-z]+$/.test(char) || e.keyCode == 32) {
         errorMessage.style.display = 'none'
         errorMessage.nextSibling.style.display = 'none'
         e.target.classList.remove('error')

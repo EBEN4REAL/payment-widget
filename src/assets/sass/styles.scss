@@ -76,7 +76,7 @@ form input, select {
 .exp-wrapper::after {
     content: '/';
     position: absolute;
-    left: 11%;
+    left: 58px;
     margin-left: -4px;
     color: #aaa;
     top: 14px;
@@ -144,7 +144,7 @@ form .field-wrapper .span-right-text {
 
 button{
     outline: none !important;
-    padding: 10px 48px 10px 48px;
+    padding: 8px 20px 8px 20px;
     font-weight: 600;
 }
 .default-button {
@@ -159,6 +159,7 @@ button{
     border: 2px solid #00B900;
     color: #070C11;
     border-radius: 6px;
+    font-size: 16px;
 }
 .default-button:hover {
     background: #5FFFE6;
@@ -208,8 +209,6 @@ button{
 .success-screen {
     background: #E2FDE3;
     box-shadow: 0px 3px 7px rgba(0, 185, 0, 0.25);
-    width: 703px;
-    width: 703px;
     position: fixed;
     top: 15px;
     right: 15px;
@@ -258,9 +257,6 @@ button{
 @media screen and (min-width: 320px) and (max-width: 768px) {
     .payment-app {
         width: 95%;
-    }
-    .exp-wrapper::after {
-        left: 21%  !important
     }
     form{
         width: 80%;
