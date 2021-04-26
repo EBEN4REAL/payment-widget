@@ -11,7 +11,7 @@
         </div>
       </div>
       <div class="field-wrapper position-relative mt-3">
-        <input type="text"  class="default-input "  @input="validateAmount" />
+        <input type="text"  class="default-input "  @input="validateAmount" required />
         <span class="error-message"></span>
         <span class="error-icon">
           <img src="@/assets/img/error.png" width="20" />
@@ -72,14 +72,15 @@
         </div>
       </div>
       <div class="field-wrapper mt-4 position-relative">
-        <input type="text" placeholder="Full name" class="default-input" @keypress=" validateCharacters"/>
+        <input type="text" class="default-input" @keypress=" validateCharacters" required/>
         <span class="error-message"></span>
         <span class="error-icon">
           <img src="@/assets/img/error.png" width="20" />
         </span>
+        <span class="floating-label">Full name</span>
       </div>
       <div class="field-wrapper mt-4 position-relative">
-        <input type="text" placeholder="Card number" id="card-number" class="default-input" @input="validateCardNumber" />
+        <input type="text"  id="card-number" class="default-input" @input="validateCardNumber" required />
         <span class="error-message" id="card-error-message"></span>
         <span class="error-icon" id="card-error-icon">
           <img src="@/assets/img/error.png" width="20" />
@@ -87,6 +88,7 @@
         <span class="span-right">
           <img src="@/assets/img/card.png" class="card-img" width="30" />
         </span>
+        <span class="floating-label">Card number</span>
       </div>
       <div class="field-wrapper mt-4 position-relative">
         <div class="exp-wrapper default-input" id="expiry-field">
@@ -102,11 +104,12 @@
         </span>
       </div>
       <div class="field-wrapper mt-4 position-relative">
-        <input type="text" placeholder="CVV" class="default-input"  @input="validateCvv"/>
+        <input type="text"  class="default-input"  @input="validateCvv" required/>
         <span class="error-message"></span>
         <span class="error-icon">
           <img src="@/assets/img/error.png" width="20" />
         </span>
+        <span class="floating-label">CVV</span>
       </div>
       <div class="mt-4">
         <button class="default-button w-100" type="submit" 

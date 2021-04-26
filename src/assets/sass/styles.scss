@@ -24,6 +24,24 @@ h1, h2, h3, h4, h5, h6 {
     font-size: 14px;
     line-height: 17px;
 }
+input:not(:focus):valid ~ .floating-label,
+input:focus ~ .floating-label
+{
+  top: 0px;
+  left: 15px;
+  font-size: 13px;
+  opacity: 1;
+}
+
+.floating-label {
+  position: absolute;
+  pointer-events: none;
+  left: 20px;
+  top: 15px;
+  transition: 0.2s ease all;
+  font-size: 16px;
+  color: #68879A;
+}
 form{
     width: 70%;
     margin: 0 auto;
@@ -200,23 +218,10 @@ button{
     cursor: pointer;
 }
 
-.floating-label {
-	position: absolute;
-	pointer-events: none;
-	top: 15px;
-	left: 10px;
-    font-size: 15px;
-	transition: 0.2s ease all;
-}
-input:focus ~ .floating-label {
-    top: 0px;
-	left: 10px;
-	font-size: 13px;
-	opacity: 1;
-}
+
+
 
 // Scroll
-
 ::-webkit-scrollbar {
     width: 7px;
     height: 7px;
