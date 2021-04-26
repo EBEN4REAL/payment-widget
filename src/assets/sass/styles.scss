@@ -244,6 +244,11 @@ button{
     .payment-app {
         width: 90%;
     }
+    .success-screen {
+        top: 0;
+        left: 0;
+        right: 0;
+    }
 }
 @media screen and (min-width: 768px) and (max-width: 1024px) {
     .payment-app {
@@ -252,10 +257,34 @@ button{
     form{
         width: 70%;
     }
+    .success-screen {
+        top: 0;
+        left: 0;
+        right: 0;
+    }
+    .w-mb-none {
+        width: auto !important ;
+    }
+    .receipt-section{
+        text-align: center;
+        margin-top: 15px;
+    }
 }
 @media screen and (min-width: 320px) and (max-width: 768px) {
     .payment-app {
         width: 95%;
+    }
+    .success-screen {
+        top: 0;
+        left: 0;
+        right: 0;
+    }
+    .w-mb-none {
+        width: auto !important ;
+    }
+    .receipt-section{
+        text-align: center;
+        margin-top: 15px;
     }
     form{
         width: 80%;

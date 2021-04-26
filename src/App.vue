@@ -128,10 +128,10 @@
       </div>
       <div class="success-screen py-3 pl-2 pr-2" v-if="showSuccessScreen">
         <div class="row row align-items-center">
-          <div class="col-md-1">
+          <div class="col-md-1 w-mb-none text-right">
             <img src="@/assets/img/success.png" width="30" />
           </div>
-          <div class="col-md-6">
+          <div class="col-md-6 w-mb-none ">
             <div>
               <span class="bold-font">
                 Transaction successful
@@ -143,7 +143,7 @@
               </span>
             </div>
           </div>
-          <div class="col-md-5">
+          <div class="col-md-5 receipt-section">
             <button class="secondary-layer" type="submit" >Download receipt</button>
             <img src="@/assets/img/Close_Btn.png"  width="20" class="ml-3 close-button" @click="toggleSuccessToast" />
           </div>
@@ -172,7 +172,7 @@ export default {
       name: '',
       amount: '',
       formIsValid: false,
-      showSuccessScreen: false,
+      showSuccessScreen: true,
       validators: {
         amount: false,
         name: false,
@@ -188,11 +188,9 @@ export default {
         for(let val in validators) {
           if(!validators[val]) {
             this.formIsValid  =  false
-            console.log(this.formIsValid)
             return
           }else {
             this.formIsValid = true
-            console.log(this.formIsValid)
           }
         }
         
@@ -501,9 +499,9 @@ export default {
       }
 
       this.showSuccessScreen = !this.showSuccessScreen
-      setTimeout(() => {
-        this.showSuccessScreen = !this.showSuccessScreen
-      }, 5000)
+      // setTimeout(() => {
+      //   this.showSuccessScreen = !this.showSuccessScreen
+      // }, 5000)
     },
 
     toggleSuccessToast() {
