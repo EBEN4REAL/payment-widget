@@ -336,6 +336,7 @@ export default {
         errorMessage.style.display = 'none'
         errorMessage.nextSibling.style.display = 'none'
         e.target.classList.remove('error')
+        e.target.style.border = '1px solid #23C5AC'
         this.validators.name = true
       } else {
         e.preventDefault()
@@ -364,6 +365,7 @@ export default {
       }else {
         errorMessage.style.display = 'none'
         errorMessage.nextSibling.style.display = 'none'
+        expField.style.border = '1px solid #23C5AC'
         expField.classList.remove('error')
         this.validators.expiryDate = true
       }
@@ -391,6 +393,7 @@ export default {
         errorMessage.style.display = 'none'
         errorMessage.nextSibling.style.display = 'none'
         e.target.classList.remove('error')
+        e.target.style.border = '1px solid #23C5AC'
         var invalidChars = /[^0-9]/gi
 
         if(invalidChars.test(e.target.value)) {
@@ -418,6 +421,7 @@ export default {
         errorMessage.style.display = 'none'
         errorMessage.nextSibling.style.display = 'none'
         e.target.classList.remove('error')
+        e.target.style.border = '1px solid #23C5AC'
       }
       if(invalidChars.test(e.target.value)) {
         e.target.value = e.target.value.replace(invalidChars,"");
@@ -451,6 +455,7 @@ export default {
         errorMessage.style.display = 'none'
         errorMessage.nextSibling.style.display = 'none'
         cardField.classList.remove('error')
+        cardField.style.border = '1px solid #23C5AC'
         this.validators.cardNumber = true
       }else {
         errorMessage.style.display = 'inline'
@@ -490,10 +495,12 @@ export default {
         cardErrorMessage.style.display = 'none'
         cardErrorMessage.nextElementSibling.style.display = 'none'
         cardField.classList.remove('error')
+        cardField.style.border = '1px solid #23C5AC'
 
         errorMessage.style.display = 'none'
         errorIcon.style.display = 'none'
         nameInput.classList.remove('error')
+        nameInput.style.border = '1px solid #23C5AC'
         this.formIsValid = true
       }
 
