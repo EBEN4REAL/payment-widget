@@ -123,13 +123,6 @@ form .field-wrapper .span-right-text {
     top: 16px;
     color: #68879A;
 }
-form .field-wrapper .floating-label {
-    position: absolute;
-    left: 15px;
-    top: 0px;
-    color:#68879A;
-    transition: 0.2s ease all;
-}
 
 button{
     outline: none !important;
@@ -206,6 +199,22 @@ button{
 .close-button {
     cursor: pointer;
 }
+
+.floating-label {
+	position: absolute;
+	pointer-events: none;
+	top: 15px;
+	left: 10px;
+    font-size: 15px;
+	transition: 0.2s ease all;
+}
+input:focus ~ .floating-label {
+    top: 0px;
+	left: 10px;
+	font-size: 13px;
+	opacity: 1;
+}
+
 // Scroll
 
 ::-webkit-scrollbar {

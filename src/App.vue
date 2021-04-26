@@ -11,7 +11,7 @@
         </div>
       </div>
       <div class="field-wrapper position-relative mt-3">
-        <input type="text"  class="default-input " placeholder="Enter amount" @input="validateAmount" />
+        <input type="text"  class="default-input "  @input="validateAmount" />
         <span class="error-message"></span>
         <span class="error-icon">
           <img src="@/assets/img/error.png" width="20" />
@@ -21,6 +21,7 @@
             {{selectedCountry ? selectedCountry.currencies[0].code : countryInfo.code}}
           </span>
         </span>
+        <span class="floating-label">Enter Amount</span>
       </div>
       <div class="header-info mt-3">
         <div class="step-label">
