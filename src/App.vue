@@ -172,7 +172,7 @@ export default {
       name: '',
       amount: '',
       formIsValid: false,
-      showSuccessScreen: true,
+      showSuccessScreen: false,
       validators: {
         amount: false,
         name: false,
