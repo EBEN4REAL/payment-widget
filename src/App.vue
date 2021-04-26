@@ -11,8 +11,12 @@
         </div>
       </div>
       <div class="field-wrapper position-relative mt-3">
-        <input type="text"  class="default-input " placeholder="Enter amount" value="0" @input="validateAmount" />
-        <span class="span-right-text">
+        <input type="text"  class="default-input " placeholder="Enter amount" @input="validateAmount" />
+        <span class="error-message"></span>
+        <span class="error-icon">
+          <img src="@/assets/img/error.png" width="20" />
+        </span>
+        <span class="span-right-text mr-3">
           <span>
             {{selectedCountry ? selectedCountry.currencies[0].code : countryInfo.code}}
           </span>
@@ -114,6 +118,29 @@
               : { cursor: 'pointer' }
           ]">Pay {{convertThousand(parseFloat(amount))}}  {{selectedCountry ? selectedCountry.currencies[0].code : countryInfo.code}} </button>
       </div>
+      <div class="success-screen py-3 pl-2 pr-2" v-if="showSuccessScreen">
+        <div class="row row align-items-center">
+          <div class="col-md-1">
+            <img src="@/assets/img/success.png" width="30" />
+          </div>
+          <div class="col-md-6">
+            <div>
+              <span class="bold-font">
+                Transaction successful
+              </span>
+            </div>
+            <div>
+              <span>
+                Funds added to the FasterPay account
+              </span>
+            </div>
+          </div>
+          <div class="col-md-5">
+            <button class="secondary-layer" type="submit" >Download receipt</button>
+            <img src="@/assets/img/Close_Btn.png"  width="20" class="ml-3 close-button" @click="toggleSuccessToast" />
+          </div>
+        </div>
+      </div>
     </form>
   </div>
 </template>
@@ -137,6 +164,7 @@ export default {
       name: '',
       amount: '',
       formIsValid: false,
+      showSuccessScreen: false,
       validators: {
         amount: false,
         name: false,
@@ -149,14 +177,17 @@ export default {
   watch: {
     validators: {
       handler: function(validators) {
+        
         for(let val in validators) {
           if(!validators[val]) {
-            this.formIsValid = false
+            this.formIsValid  =  false
+            return
           }else {
             this.formIsValid = true
+            console.log( this.formIsValid)
           }
         }
-        console.log(this.formIsValid)
+        
       },
       deep: true
     },
@@ -283,6 +314,7 @@ export default {
           this.paymentMethods = data
         });
     },
+
     selectCountry(e) {
       const countries = [...this.countries]
       const filteredCountry = countries.filter(country => country.alpha2Code == e.target.value)[0]
@@ -291,6 +323,7 @@ export default {
         : filteredCountry.currencies[0].code
       this.selectedCountry = filteredCountry
     },
+
     validateCharacters(e) {
       const errorMessage = e.target.nextSibling
       let char = String.fromCharCode(e.keyCode)
@@ -306,9 +339,9 @@ export default {
         errorMessage.style.color = '#FF0000'
         errorMessage.nextSibling.style.display = 'inline'
         e.target.classList.add('error')
-        this.validators.name = false
       }
     },
+
     validateExpiryDate() {
       const errorMessage = document.getElementById('expiry')
       const expField = document.getElementById('expiry-field')
@@ -320,13 +353,14 @@ export default {
       someday = new Date();
       someday.setFullYear(yearInput, monthInput - 1);
 
+
       if (someday < today) {
+        this.validators.expiryDate = false
         errorMessage.style.display = 'inline'
         errorMessage.innerHTML = 'Invalid expiration date'
         errorMessage.style.color = '#FF0000'
         errorMessage.nextSibling.style.display = 'inline'
         expField.classList.add('error')
-        this.validators.expiryDate = false
       }else {
         errorMessage.style.display = 'none'
         errorMessage.nextSibling.style.display = 'none'
@@ -334,24 +368,59 @@ export default {
         this.validators.expiryDate = true
       }
     },
-
+ 
     validateAmount(e){
-      this.amount = e.target.value
-      var invalidChars = /[^0-9]/gi
-      if(invalidChars.test(e.target.value)) {
-        e.target.value = e.target.value.replace(invalidChars,"");
+      const errorMessage = e.target.nextSibling
+      if(e.target.value == '0') {
+        errorMessage.style.display = 'inline'
+        errorMessage.innerHTML = 'Amount should be greater than 0'
+        errorMessage.style.color = '#FF0000'
+        errorMessage.nextSibling.style.display = 'inline'
+        e.target.classList.add('error')
         this.validators.amount = false
-      }else {
-        this.validators.amount = true
+      }else if(e.target.value == '') {
+        errorMessage.style.display = 'inline'
+        errorMessage.innerHTML = 'Amount is required'
+        errorMessage.style.color = '#FF0000'
+        errorMessage.nextSibling.style.display = 'inline'
+        e.target.classList.add('error')
+        this.validators.amount = false
+      }
+      else {
+        this.amount = e.target.value
+        errorMessage.style.display = 'none'
+        errorMessage.nextSibling.style.display = 'none'
+        e.target.classList.remove('error')
+        var invalidChars = /[^0-9]/gi
+
+        if(invalidChars.test(e.target.value)) {
+          e.target.value = e.target.value.replace(invalidChars,"");
+          this.validators.amount = false
+        }else {
+          this.validators.amount = true
+        }
       }
       
     },
 
     validateCvv(e) {
+      const errorMessage = e.target.nextSibling
       let invalidChars = /[^0-9]/gi
+       if(e.target.value == '') {
+        errorMessage.style.display = 'inline'
+        errorMessage.innerHTML = 'Cvv is required'
+        errorMessage.style.color = '#FF0000'
+        errorMessage.nextSibling.style.display = 'inline'
+        e.target.classList.add('error')
+        this.validators.cvv = false
+        return
+      }else {
+        errorMessage.style.display = 'none'
+        errorMessage.nextSibling.style.display = 'none'
+        e.target.classList.remove('error')
+      }
       if(invalidChars.test(e.target.value)) {
         e.target.value = e.target.value.replace(invalidChars,"");
-        this.validators.cvv = false
       }else {
         this.validators.cvv = true
       }
@@ -394,6 +463,13 @@ export default {
     },
     pay(e){
       e.preventDefault()
+      this.showSuccessScreen = !this.showSuccessScreen
+      // setTimeout(() => {
+      //   this.showSuccessScreen = !this.showSuccessScreen
+      // }, 5000)
+    },
+    toggleSuccessToast() {
+      this.showSuccessScreen = !this.showSuccessScreen
     },
     convertThousand(request) {
       if (!isFinite(request)) {
