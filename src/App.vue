@@ -358,7 +358,7 @@ export default {
       if (someday < today) {
         this.validators.expiryDate = false
         errorMessage.style.display = 'inline'
-        errorMessage.innerHTML = 'Invalid expiration date'
+        errorMessage.innerHTML = 'Invalid date, please re-enter'
         errorMessage.style.color = '#FF0000'
         errorMessage.nextSibling.style.display = 'inline'
         expField.classList.add('error')
