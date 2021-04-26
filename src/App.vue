@@ -334,6 +334,8 @@ export default {
         errorMessage.nextSibling.style.display = 'none'
         e.target.classList.remove('error')
         this.validators.name = true
+      } else {
+        e.preventDefault()
       }
     },
 

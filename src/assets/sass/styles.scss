@@ -259,6 +259,9 @@ button{
     .payment-app {
         width: 95%;
     }
+    .exp-wrapper::after {
+        left: 21%  !important
+    }
     form{
         width: 80%;
     }
