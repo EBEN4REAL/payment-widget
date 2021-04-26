@@ -335,12 +335,7 @@ export default {
         e.target.classList.remove('error')
         this.validators.name = true
       } else {
-        e.preventDefault()
-        errorMessage.style.display = 'inline'
-        errorMessage.innerHTML = 'Please input letters'
-        errorMessage.style.color = '#FF0000'
-        errorMessage.nextSibling.style.display = 'inline'
-        e.target.classList.add('error')
+        
       }
     },
 
