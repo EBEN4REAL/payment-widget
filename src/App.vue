@@ -459,6 +459,7 @@ export default {
         this.validators.cardNumber = false
       }
     },
+    
     pay(e){
       e.preventDefault()
       this.showSuccessScreen = !this.showSuccessScreen
@@ -466,9 +467,11 @@ export default {
         this.showSuccessScreen = !this.showSuccessScreen
       }, 5000)
     },
+
     toggleSuccessToast() {
       this.showSuccessScreen = !this.showSuccessScreen
     },
+
     convertThousand(request) {
       if (!isFinite(request)) {
         return "0.00";
